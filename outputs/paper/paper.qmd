@@ -1,13 +1,12 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Investigating the Mean of the True Data Generating Process"
+subtitle: " Addressing Data Integrity Issues"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
+  - Vanshika Vanshika
+thanks: "Code and data are available at: https://github.com/vanshikav2/Linear_Model_Analysis."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "In this paper, we investigated whether the mean of a cleaned dataset, originating from a flawed instrument, exceeded zero. Through visual analysis of histograms and boxplots, we observed a concentration of values around zero, with a notable threshold at one. Despite data integrity issues, our findings shed light on the dataset's distribution and underscore the importance of rigorous data cleaning processes. Understanding the impact of data quality on analysis outcomes is critical for ensuring the reliability of research findings in various domains."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -19,13 +18,18 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+library(ggplot2)
+library(here)
+
+# Read cleaned dataset
+cleaned_data <- read.csv(here("outputs/data", "analysis_data.csv"), header = FALSE, skip = 2)
+
 ```
 
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. 
+In this analysis, we explore the impact of issues encountered during data cleaning on our understanding of the true data generating process. We examine histograms and boxplots of the cleaned dataset to assess whether the mean of the true data generating process is greater than 0. Additionally, we discuss the implications of the issues and propose steps to ensure data integrity in future analyses.
 
 The remainder of this paper is structured as follows. @sec-data....
 
@@ -33,185 +37,63 @@ The remainder of this paper is structured as follows. @sec-data....
 
 # Data {#sec-data}
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+We begin by reading the cleaned dataset from the CSV file and calculating the mean of the dataset. Next, we create histograms and boxplots to visualize the distribution of the cleaned data and overlay the mean value for comparison as seen in @fig-bills.
+
 
 ```{r}
 #| label: fig-bills
-#| fig-cap: Bills of penguins
+#| fig-cap: Mean of Cleaned Data
 #| echo: false
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
+
+
+# Calculate mean of the cleaned dataset
+mean_cleaned <- mean(cleaned_data$V1)
+
+# Create histogram of cleaned data
+histogram <- ggplot(data = data.frame(x = cleaned_data$V1), aes(x = x)) +
+  geom_histogram(binwidth = 0.2, fill = "skyblue", color = "black", alpha = 0.7) +
+  labs(title = "Histogram of Cleaned Data",
+       x = "Value", y = "Frequency") +
+  geom_vline(xintercept = mean_cleaned, color = "red", linetype = "dashed") +
+  theme_minimal()
+
+# Display plots
+print(histogram)
+
 ```
+### Data Cleaning
 
-Talk more about it.
+Before delving into our analysis, it is imperative to shed light on the intricacies of the data cleaning process.We used R [@citeR] for data cleaning and processing, utilizing packages like tidyverse [@tidy] for cleaning column names. Other packages used includes `ggplot2` [@ggplot], and `here` [@here]. Unknown to us, the instrument used for data collection harbored a flaw, leading to the inadvertent repetition of the final 100 observations, which are duplicates of the first 100. Additionally, during the cleaning process, our research assistant inadvertently altered half of the negative values to be positive and adjusted the decimal place for values between 1 and 1.1. These inadvertent modifications necessitated thorough scrutiny to ensure the integrity of our subsequent analysis.
 
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
+### Analysis Approach
 
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
-#| message: false
+To ascertain whether the mean of the true data generating process is greater than 0, we employed visual analysis techniques. Specifically, we constructed a histogram of the cleaned dataset to gain insights into its distribution. Additionally, we created a boxplot to further elucidate the central tendency and variability of the dataset. These graphical representations allowed us to discern any discernible patterns, anomalies, or trends that might inform our understanding of the underlying data generating process.
 
-analysis_data <- read_csv(here::here("outputs/data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
-```
-
-Talk way more about it. 
-
-
-
-# Model
-
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
-
-## Model set-up
-
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
-
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
-
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
-
-
-### Model justification
-
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
 
 
 # Results
 
-Our results are summarized in @tbl-modelresults.
-
-```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
-
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("outputs/models/first_model.rds"))
-```
-
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
-
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
-```
-
-
+Upon meticulous examination of the histogram and boxplot of the cleaned dataset, several notable observations emerged. The histogram revealed a peak frequency around 0, indicative of a substantial proportion of values clustered around this central point. This distribution pattern suggests that the dataset exhibits symmetry around 0, with values on either side being similarly represented. Notably, the presence of the red dashed line at Value = 1 on the histogram signifies a potential threshold or target value relevant to our analysis.
 
 
 # Discussion
 
-## First discussion point {#sec-first-point}
+The findings from our analysis provide valuable insights into the distribution of the cleaned dataset and its implications for evaluating the mean of the true data generating process. The observed concentration of values around 0 raises intriguing questions about the underlying data-generating mechanism and its relationship to our hypothesis regarding the mean exceeding 0. Additionally, the presence of the threshold value at 1 warrants further investigation to discern its significance in the context of our analysis.
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+### Impact of Data Integrity Issues
 
-## Second discussion point
+The inadvertent issues encountered during the data cleaning process had notable implications for our analysis. The instrument memory issue, resulting in the duplication of observations, introduced bias into the dataset, potentially skewing our assessment of the mean. Furthermore, the inadvertent alterations to negative values and adjustments to decimal places undermined the integrity of the dataset, necessitating careful consideration to mitigate their impact on our findings.
 
-## Third discussion point
+Steps to Ensure Data Integrity: 
+To ensure the integrity of future analyses and preemptively flag potential issues, several proactive measures can be implemented:
 
-## Weaknesses and next steps
+1. Robust Quality Control Procedures: Establish stringent quality control protocols to detect and rectify issues during data collection and preprocessing.
+2. Automated Validation Checks: Implement automated validation checks to flag anomalies and inconsistencies in the dataset, facilitating timely intervention.
+3. Documentation and Transparency: Maintain comprehensive documentation of data collection and cleaning procedures, enhancing transparency and reproducibility.
+4. Peer Review Processes: Incorporate peer review mechanisms to validate findings and identify potential sources of bias or error, fostering rigor and accountability in the analysis process.
 
-Weaknesses and next steps should also be included.
-
-\newpage
-
-\appendix
-
-# Appendix {-}
-
-
-# Additional data details
-
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
-
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
-```
-
-## Diagnostics
-
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
-
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
-
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
-```
-
-
+By adopting these measures, researchers can bolster the reliability and validity of their analyses, thereby enhancing confidence in the resulting findings and facilitating meaningful contributions to the body of knowledge in their respective domains.
 
 \newpage
 

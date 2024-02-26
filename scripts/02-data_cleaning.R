@@ -11,34 +11,38 @@
 library(tidyverse)
 
 #### Clean data ####
-raw_data <- read_csv("inputs/data/plane_data.csv")
+# Simulated data after introducing instrument memory issue
+# (You can replace this with your actual simulated data)
+# Read simulated data from the CSV file
+simulated_data <- read.csv("inputs/data/simulated_data.csv", header = FALSE)
 
-cleaned_data <-
-  raw_data |>
-  janitor::clean_names() |>
-  select(wing_width_mm, wing_length_mm, flying_time_sec_first_timer) |>
-  filter(wing_width_mm != "caw") |>
-  mutate(
-    flying_time_sec_first_timer = if_else(flying_time_sec_first_timer == "1,35",
-                                   "1.35",
-                                   flying_time_sec_first_timer)
-  ) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "490",
-                                 "49",
-                                 wing_width_mm)) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "6",
-                                 "60",
-                                 wing_width_mm)) |>
-  mutate(
-    wing_width_mm = as.numeric(wing_width_mm),
-    wing_length_mm = as.numeric(wing_length_mm),
-    flying_time_sec_first_timer = as.numeric(flying_time_sec_first_timer)
-  ) |>
-  rename(flying_time = flying_time_sec_first_timer,
-         width = wing_width_mm,
-         length = wing_length_mm
-         ) |> 
-  tidyr::drop_na()
 
+# Extract the first column as a vector
+data <- as.numeric(simulated_data[[2]])
+
+# Function to clean the dataset
+clean_data <- function(data) {
+  # Copy the data to avoid modifying the original dataset
+  cleaned_data <- data
+  
+  # Change half of the negative values to positive
+  negative_indices <- which(cleaned_data < 0)
+  num_to_change <- length(negative_indices) / 2
+  sampled_indices <- sample(negative_indices, num_to_change)
+  cleaned_data[sampled_indices] <- abs(cleaned_data[sampled_indices])
+  
+  # Change decimal places between 1 and 1.1
+  decimal_indices <- which(cleaned_data >= 1 & cleaned_data <= 1.1)
+  cleaned_data[decimal_indices] <- cleaned_data[decimal_indices] / 10
+  
+  return(cleaned_data)
+}
+
+# Clean the data
+cleaned_data <- clean_data(data)
+
+# Print cleaned data
+print(cleaned_data)
 #### Save data ####
-write_csv(cleaned_data, "outputs/data/analysis_data.csv")
+# Write cleaned data to a CSV file
+write.csv(cleaned_data, file = "outputs/data/analysis_data.csv", row.names = FALSE)
