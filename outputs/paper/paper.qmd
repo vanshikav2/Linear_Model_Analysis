@@ -6,7 +6,7 @@ author:
 thanks: "Code and data are available at: https://github.com/vanshikav2/Linear_Model_Analysis."
 date: today
 date-format: long
-abstract: "In this paper, we investigated whether the mean of a cleaned dataset, originating from a flawed instrument, exceeded zero. Through visual analysis of histograms and boxplots, we observed a concentration of values around zero, with a notable threshold at one. Despite data integrity issues, our findings shed light on the dataset's distribution and underscore the importance of rigorous data cleaning processes. Understanding the impact of data quality on analysis outcomes is critical for ensuring the reliability of research findings in various domains."
+abstract: "In this paper, we investigated whether the mean of a cleaned dataset, originating from a flawed instrument, exceeded zero. After analysis of data, we observed a concentration of values around zero, with a notable threshold at one. Despite data integrity issues, our findings shed light on the dataset's distribution and underscore the importance of rigorous data cleaning processes. Understanding the impact of data quality on analysis outcomes is critical for ensuring the reliability of research findings in various domains."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -29,9 +29,9 @@ cleaned_data <- read.csv(here("outputs/data", "analysis_data.csv"), header = FAL
 
 # Introduction
 
-In this analysis, we explore the impact of issues encountered during data cleaning on our understanding of the true data generating process. We examine histograms and boxplots of the cleaned dataset to assess whether the mean of the true data generating process is greater than 0. Additionally, we discuss the implications of the issues and propose steps to ensure data integrity in future analyses.
+Data integrity is crucial in statistical analysis, but various factors, including instrument limitations and human errors, can compromise this integrity. Ethical guidelines for Statistical Practice by the American Statistical Association emphasize the importance of understanding and mitigating known or suspected limitations, defects, or biases in data and methods to ensure the reliability of statistical practices (Association, 2022). This study simulates a scenario where both types of errors occur, reflecting common issues in data collection and processing. The objective is to assess the impact of these errors on statistical outcomes and propose measures to detect and prevent such discrepancies.
 
-The remainder of this paper is structured as follows. @sec-data....
+The remainder of this paper is structured as follows. In the Data Section, we denote how data was generated and processed. In the Results Section, we dive into the findings we discovered following the cleaned data after simulation. In the Discussion Section, we address biases and weaknesses in the data that contribute to our findings, and how we approached. 
 
 
 
@@ -68,13 +68,13 @@ Before delving into our analysis, it is imperative to shed light on the intricac
 
 ### Analysis Approach
 
-To ascertain whether the mean of the true data generating process is greater than 0, we employed visual analysis techniques. Specifically, we constructed a histogram of the cleaned dataset to gain insights into its distribution. Additionally, we created a boxplot to further elucidate the central tendency and variability of the dataset. These graphical representations allowed us to discern any discernible patterns, anomalies, or trends that might inform our understanding of the underlying data generating process.
+To assess whether the mean of the true data generating process is greater than 0, we employed visual analysis techniques. Specifically, we constructed a histogram of the cleaned dataset to gain insights into its distribution. Additionally, we created a boxplot to further elucidate the central tendency and variability of the dataset. These graphical representations allowed us to discern any discernible patterns, anomalies, or trends that might inform our understanding of the underlying data generating process.
 
 
 
 # Results
 
-Upon meticulous examination of the histogram and boxplot of the cleaned dataset, several notable observations emerged. The histogram revealed a peak frequency around 0, indicative of a substantial proportion of values clustered around this central point. This distribution pattern suggests that the dataset exhibits symmetry around 0, with values on either side being similarly represented. Notably, the presence of the red dashed line at Value = 1 on the histogram signifies a potential threshold or target value relevant to our analysis.
+Upon  examination of the histogram of the cleaned dataset, several notable observations emerged. The histogram revealed a peak frequency around 0, indicative of a substantial proportion of values clustered around this central point. This distribution pattern suggests that the dataset exhibits symmetry around 0, with values on either side being similarly represented. Notably, the presence of the red dashed line at Value = 1 on the histogram signifies a potential threshold or target value relevant to our analysis.
 
 
 # Discussion
@@ -83,7 +83,7 @@ The findings from our analysis provide valuable insights into the distribution o
 
 ### Impact of Data Integrity Issues
 
-The inadvertent issues encountered during the data cleaning process had notable implications for our analysis. The instrument memory issue, resulting in the duplication of observations, introduced bias into the dataset, potentially skewing our assessment of the mean. Furthermore, the inadvertent alterations to negative values and adjustments to decimal places undermined the integrity of the dataset, necessitating careful consideration to mitigate their impact on our findings.
+The issues encountered during the data cleaning process had notable implications for our analysis. The instrument memory issue, resulting in the duplication of observations, introduced bias into the dataset, potentially skewing our assessment of the mean. Furthermore, the inadvertent alterations to negative values and adjustments to decimal places undermined the integrity of the dataset, necessitating careful consideration to mitigate their impact on our findings.
 
 Steps to Ensure Data Integrity: 
 To ensure the integrity of future analyses and preemptively flag potential issues, several proactive measures can be implemented:
